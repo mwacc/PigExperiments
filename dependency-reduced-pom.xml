@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>pig.experiments</groupId>
+  <artifactId>pig-experiments</artifactId>
+  <name>Pig experiments</name>
+  <version>1.0-SNAPSHOT</version>
+  <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer>
+                  <mainClass>pig.experiments.RunApp</mainClass>
+                </transformer>
+                <transformer>
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+                <transformer>
+                  <resource>META-INF/spring.schemas</resource>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <id>spring-release</id>
+      <name>Spring Maven Release Repository</name>
+      <url>http://repo.springframework.org/release</url>
+    </repository>
+  </repositories>
+  <properties>
+    <spring.batch.version>2.1.7.RELEASE</spring.batch.version>
+    <spring.version>3.0.7.RELEASE</spring.version>
+    <spring.integration.version>2.1.3.RELEASE</spring.integration.version>
+    <log4j.version>1.2.17</log4j.version>
+    <spring.hadoop.version>1.0.0.RELEASE</spring.hadoop.version>
+    <hadoop.version>1.0.1</hadoop.version>
+    <pig.version>0.11.0</pig.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>
+
