@@ -19,6 +19,7 @@ public class ExecuteGeneralScript extends AbstractPigExecutor {
 
         boolean isFailed = false;
         System.out.println("\nRun Pig job................\n");
+        // we get control back, when Pig scipt will be finished
         List<ExecJob> jobs = super.getPigTemplate().executeScript(super.getSciptName(), scriptParameters);
 
         for(ExecJob job : jobs) {
