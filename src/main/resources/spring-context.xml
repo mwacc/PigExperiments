@@ -15,7 +15,7 @@
 
     <hdp:configuration id="hadoopConfiguration" properties-location="classpath:app.properties"/>
 
-    <hdp:pig-factory exec-type="LOCAL" configuration-ref="hadoopConfiguration" properties-location="classpath:app.properties"/>
+    <hdp:pig-factory exec-type="MAPREDUCE" configuration-ref="hadoopConfiguration" properties-location="classpath:app.properties"/>
 
     <batch:job-repository id="jobRepository"
                           data-source="dataSource"
@@ -34,13 +34,13 @@
     <bean id="aggByUrl" class="pig.experiments.pigprocessors.ExecuteGeneralScript" >
         <property name="pigTemplate" ref="pigTemplate" />
         <property name="sciptName" value="classpath:pig/slow_pages.pig" />
-        <property name="inputPath" value="${pig.script.urlagg.input}" />
-        <property name="outputPat" value="${pig.script.urlagg.output}" />
+        <property name="inputPath" value="${pig.script.input.prefix}" />
+        <property name="outputPat" value="${pig.script.urlagg.output.prefix}" />
     </bean>
 
     <!-- Batch -->
     <batch:job id="pigJob" job-repository="jobRepository">
-        <!--<batch:step id="prepareData" next="loadData">
+        <!--<batch:step id="prepareData" next="processData">
             <tasklet ref="prepareDataTasklet" />
         </batch:step> -->
         <batch:step id="processData">
