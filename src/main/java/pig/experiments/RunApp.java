@@ -17,7 +17,7 @@ public class RunApp {
         FixHadoopOnWindows.runFix();
 
         String dateTimePattern = formatter.format(new Date());
-        dateTimePattern = "2013/11/08/06";
+        //dateTimePattern = "2013/11/08/06";
 
         if( argv.length == 1 ) {
             CommandLineJobRunner.main(new String[]{"spring-context.xml", "pigJob", String.format("%s=%s", JobConstants.WORKING_HOUR, dateTimePattern ), argv[0]});
