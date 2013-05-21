@@ -7,7 +7,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd
-       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
@@ -15,7 +15,7 @@
 
     <hdp:configuration id="hadoopConfiguration" properties-location="classpath:app.properties"/>
 
-    <hdp:pig-factory exec-type="MAPREDUCE" configuration-ref="hadoopConfiguration" properties-location="classpath:app.properties"/>
+    <hdp:pig-factory exec-type="LOCAL" configuration-ref="hadoopConfiguration" properties-location="classpath:app.properties"/>
 
     <batch:job-repository id="jobRepository"
                           data-source="dataSource"
@@ -40,13 +40,22 @@
 
     <!-- Batch -->
     <batch:job id="pigJob" job-repository="jobRepository">
-        <!--<batch:step id="prepareData" next="processData">
-            <tasklet ref="prepareDataTasklet" />
-        </batch:step> -->
+        <batch:step id="prepareData" next="processData">
+            <batch:tasklet ref="prepare-script-tasklet"/>
+        </batch:step>
         <batch:step id="processData">
             <batch:tasklet ref="aggByUrl"/>
         </batch:step>
     </batch:job>
+
+    <!-- groovy script that push data to timed directory (preparation step) -->
+    <hdp:script-tasklet id="prepare-script-tasklet" >
+        <hdp:script language="groovy" evaluate="IF_MODIFIED">
+            // fsh - FileSystem instance based on 'hadoopConfiguration' bean
+            // jobParamaters = job parameters from spring batch
+            print #{jobParameters['WorkingHour']}
+        </hdp:script>
+    </hdp:script-tasklet>
 
     <bean id="dataSource" class="org.enhydra.jdbc.pool.StandardPoolDataSource"
           destroy-method="shutdown">

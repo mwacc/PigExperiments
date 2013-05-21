@@ -22,6 +22,9 @@ public class ExecuteGeneralScript extends AbstractPigExecutor {
 
         boolean isFailed = false;
         System.out.println("\nRun Pig job................\n");
+        System.out.println( String.format("\nData will be processed from directory %s and pushed to %s",
+                super.getInputPath() + dateTimeMarker,
+                super.getOutputPat() + dateTimeMarker) );
         // we get control back, when Pig scipt will be finished
         List<ExecJob> jobs = super.getPigTemplate().executeScript(super.getSciptName(), scriptParameters);
 
