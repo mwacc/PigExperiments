@@ -68,6 +68,22 @@
         </hdp:script>
     </hdp:script-tasklet>
 
+
+    <!-- push data to predefined directory; if this directory exist they will be removed -->
+    <hdp:script-tasklet id="finish-script-tasklet" scope="step">
+        <hdp:script language="groovy" evaluate="ALWAYS">
+            // fs - org.apache.hadoop.fs.FileSystem
+            // fsh - org.springframework.data.hadoop.fs.FsShell instance based on 'hadoopConfiguration' bean
+            // distcp	org.springframework.data.hadoop.fs.DistributedCopyUtil	Programmatic access to DistCp
+            // jobParamaters = job parameters from spring batch
+
+            println "work hour is  #{jobParameters['WorkingHour']}"
+
+            // copy regular file to appropriate hour
+            distcp.copy("${etl.logs.input}", "${pig.script.input.prefix}#{jobParameters['WorkingHour']}/")
+        </hdp:script>
+    </hdp:script-tasklet>
+
     <!-- pig job to aggregate log by some values -->
     <bean id="aggByUrl" class="pig.experiments.pigprocessors.ExecuteGeneralScript" >
         <property name="pigTemplate" ref="pigTemplate" />

@@ -1,6 +1,7 @@
 package pig.experiments.pigprocessors;
 
 import org.apache.pig.backend.executionengine.ExecJob;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -32,12 +33,16 @@ public class ExecuteGeneralScript extends AbstractPigExecutor {
             if( ExecJob.JOB_STATUS.FAILED == job.getStatus() ) {
                 isFailed = true;
             }
-
         }
 
         System.out.println("Fished " + (isFailed ? "unsuccessful" : "successful"));
 
+        // set exit status for this tasklet
+        stepContribution.setExitStatus(isFailed ? ExitStatus.FAILED : ExitStatus.COMPLETED);
 
+        // step is finished
+        // CONTINUABLE	There is more work to do.
+        // FINISHED	    No more repetitions should take place.
         return RepeatStatus.FINISHED;
     }
 }
