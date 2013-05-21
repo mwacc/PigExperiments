@@ -48,6 +48,15 @@
         </batch:step>
         <batch:step id="processData">
             <batch:tasklet ref="aggByUrl"/>
+            <batch:next on="FAILED" to="finishProcessing"/>
+            <batch:next on="*" to="finishProcessing"/>
+        </batch:step>
+        <batch:step id="finishProcessing" next="endProcessing">
+            <batch:tasklet ref="finish-script-tasklet" />
+        </batch:step>
+        <!-- step will be executed only on fail -->
+        <batch:step id="endProcessing">
+            <batch:tasklet ref="log-end" />
         </batch:step>
     </batch:job>
 
@@ -72,15 +81,21 @@
     <!-- push data to predefined directory; if this directory exist they will be removed -->
     <hdp:script-tasklet id="finish-script-tasklet" scope="step">
         <hdp:script language="groovy" evaluate="ALWAYS">
-            // fs - org.apache.hadoop.fs.FileSystem
-            // fsh - org.springframework.data.hadoop.fs.FsShell instance based on 'hadoopConfiguration' bean
-            // distcp	org.springframework.data.hadoop.fs.DistributedCopyUtil	Programmatic access to DistCp
-            // jobParamaters = job parameters from spring batch
+            println "Publishing result to ${etl.logs.output} (will be overwritten)"
 
-            println "work hour is  #{jobParameters['WorkingHour']}"
+            // remove dir if exist
+            if (fsh.test("${etl.logs.output}")) {
+                 fsh.rmr("${etl.logs.output}")
+            }
+            // copy hour to general output
+            distcp.copy("${pig.script.input.prefix}#{jobParameters['WorkingHour']}/", "${etl.logs.output}")
+        </hdp:script>
+    </hdp:script-tasklet>
 
-            // copy regular file to appropriate hour
-            distcp.copy("${etl.logs.input}", "${pig.script.input.prefix}#{jobParameters['WorkingHour']}/")
+    <!-- just simple example of last job in flow -->
+    <hdp:script-tasklet id="log-end" scope="step">
+        <hdp:script language="groovy" evaluate="ALWAYS">
+            println "Reach the end of flow for ${pig.script.input.prefix}#{jobParameters['WorkingHour']}/"
         </hdp:script>
     </hdp:script-tasklet>
 

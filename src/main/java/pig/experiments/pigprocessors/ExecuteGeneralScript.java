@@ -13,32 +13,37 @@ import java.util.Properties;
 public class ExecuteGeneralScript extends AbstractPigExecutor {
 
     @Override
-    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) {
         String dateTimeMarker = (String) chunkContext.getStepContext().getJobParameters().get(JobConstants.WORKING_HOUR);
 
-        Properties scriptParameters = new Properties();
-        scriptParameters.put("input", super.getInputPath() + dateTimeMarker);
-        scriptParameters.put("output", super.getOutputPat() + dateTimeMarker);
-        scriptParameters.put("parallel", 1);
+        try {
+            Properties scriptParameters = new Properties();
+            scriptParameters.put("input", super.getInputPath() + dateTimeMarker);
+            scriptParameters.put("output", super.getOutputPat() + dateTimeMarker);
+            scriptParameters.put("parallel", 1);
 
-        boolean isFailed = false;
-        System.out.println("\nRun Pig job................\n");
-        System.out.println( String.format("\nData will be processed from directory %s and pushed to %s",
-                super.getInputPath() + dateTimeMarker,
-                super.getOutputPat() + dateTimeMarker) );
-        // we get control back, when Pig scipt will be finished
-        List<ExecJob> jobs = super.getPigTemplate().executeScript(super.getSciptName(), scriptParameters);
+            boolean isFailed = false;
+            System.out.println("\nRun Pig job................\n");
+            System.out.println( String.format("\nData will be processed from directory %s and pushed to %s",
+                    super.getInputPath() + dateTimeMarker,
+                    super.getOutputPat() + dateTimeMarker) );
+            // we get control back, when Pig scipt will be finished
+            List<ExecJob> jobs = super.getPigTemplate().executeScript(super.getSciptName(), scriptParameters);
 
-        for(ExecJob job : jobs) {
-            if( ExecJob.JOB_STATUS.FAILED == job.getStatus() ) {
-                isFailed = true;
+            for(ExecJob job : jobs) {
+                if( ExecJob.JOB_STATUS.FAILED == job.getStatus() ) {
+                    isFailed = true;
+                }
             }
+
+            System.out.println("Pig script "+super.getSciptName()+" fished " + (isFailed ? "unsuccessful" : "successful"));
+
+            // set exit status for this tasklet
+            stepContribution.setExitStatus( isFailed ? ExitStatus.FAILED : ExitStatus.COMPLETED );
+        } catch(Exception e) {
+            System.out.println("Fished with exception: " + e.getMessage());
+            stepContribution.setExitStatus( ExitStatus.FAILED );
         }
-
-        System.out.println("Fished " + (isFailed ? "unsuccessful" : "successful"));
-
-        // set exit status for this tasklet
-        stepContribution.setExitStatus(isFailed ? ExitStatus.FAILED : ExitStatus.COMPLETED);
 
         // step is finished
         // CONTINUABLE	There is more work to do.
