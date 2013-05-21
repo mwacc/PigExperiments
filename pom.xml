@@ -175,12 +175,12 @@
             <version>5.1.23</version>
         </dependency>
 
+        <!-- reguired by Pig -->
         <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>0.9.94</version>
         </dependency>
-
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
@@ -200,6 +200,14 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.1</version>
+        </dependency>
+
+
+        <!-- Fix Pig on windows -->
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.3</version>
         </dependency>
 
     </dependencies>

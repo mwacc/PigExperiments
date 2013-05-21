@@ -3,12 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:hdp="http://www.springframework.org/schema/hadoop"
        xmlns:batch="http://www.springframework.org/schema/batch"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd
        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <context:property-placeholder  location="app.properties"/>
@@ -58,14 +56,15 @@
      -->
     <hdp:script-tasklet id="prepare-script-tasklet" scope="step">
         <hdp:script language="groovy" evaluate="ALWAYS">
-            println "Inside tasklet"
             // fs - org.apache.hadoop.fs.FileSystem
             // fsh - org.springframework.data.hadoop.fs.FsShell instance based on 'hadoopConfiguration' bean
             // distcp	org.springframework.data.hadoop.fs.DistributedCopyUtil	Programmatic access to DistCp
             // jobParamaters = job parameters from spring batch
 
             println "work hour is  #{jobParameters['WorkingHour']}"
-            println "Exit tasklet"
+
+            // copy regular file to appropriate hour
+            distcp.copy("${etl.logs.input}", "${pig.script.input.prefix}#{jobParameters['WorkingHour']}/")
         </hdp:script>
     </hdp:script-tasklet>
 
