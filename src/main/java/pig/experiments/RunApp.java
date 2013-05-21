@@ -13,6 +13,7 @@ public class RunApp {
 
     public static void main(String[] argv) throws Exception {
         String dateTimePattern = formatter.format(new Date());
+        dateTimePattern = "2013/11/07/10";
 
         if( argv.length == 1 ) {
             CommandLineJobRunner.main(new String[]{"spring-context.xml", "pigJob", String.format("%s=%s", JobConstants.WORKING_HOUR, dateTimePattern ), argv[0]});
