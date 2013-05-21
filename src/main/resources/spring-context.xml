@@ -88,7 +88,7 @@
                  fsh.rmr("${etl.logs.output}")
             }
             // copy hour to general output
-            distcp.copy("${pig.script.input.prefix}#{jobParameters['WorkingHour']}/", "${etl.logs.output}")
+            distcp.copy("${pig.script.output.prefix}#{jobParameters['WorkingHour']}/", "${etl.logs.output}")
         </hdp:script>
     </hdp:script-tasklet>
 
