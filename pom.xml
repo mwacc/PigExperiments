@@ -45,6 +45,10 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- 
+          Spring-dependencies can be removed and replaced w/ Oozie
+          look at example https://github.com/jrkinley/oozie-examples
+        -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-hadoop</artifactId>
